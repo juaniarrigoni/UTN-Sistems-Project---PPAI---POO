@@ -1,4 +1,4 @@
-# 📘 Red Sísmica – PPAI 2025
+# Red Sísmica – PPAI 2025
 
 **Proyecto Práctico de Aplicación Integrador – UTN FRC / FRVM**
 **Materia:** Diseño de Sistemas de Información
@@ -6,7 +6,7 @@
 
 ---
 
-## 🎯 Objetivo del proyecto
+## Objetivo del proyecto
 
 Implementar en Java el caso de uso **CU 23: Registrar resultado de revisión manual** del sistema Red Sísmica. Esta funcionalidad permite al **Analista en Sismos** revisar eventos sísmicos auto detectados y registrar el resultado de dicha revisión: **confirmación**, **rechazo** o **derivación a experto**.
 
@@ -19,81 +19,147 @@ El trabajo incluye:
 
 ---
 
-## 🛠️ Requisitos técnicos
+## Requisitos técnicos
 
-### ✅ Software a instalar:
+### Software necesario
 
 * [Java JDK 17 o superior](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html)
-* [Git](https://git-scm.com/downloads)
-* [SQLite Browser (opcional)](https://sqlitebrowser.org/)
-* Un IDE compatible con Java:
 
-  * [IntelliJ IDEA (recomendado)](https://www.jetbrains.com/idea/)
-  * [VS Code con extensión Java](https://code.visualstudio.com/)
+  * Recomendado: instalador `.exe` (x64 Installer)
+* [Git](https://git-scm.com/downloads)
+* [DB Browser for SQLite (opcional)](https://sqlitebrowser.org/) para ver y editar la base manualmente
+* Un IDE compatible con Java (al menos uno):
+
+  * [IntelliJ IDEA](https://www.jetbrains.com/idea/)
+  * [VS Code](https://code.visualstudio.com/) con extensiones Java
   * [Eclipse](https://www.eclipse.org/downloads/)
+
+### Configuración de Java en Windows
+
+1. Instalar Java desde el instalador `.exe`
+2. Agregar al PATH (si no lo hizo automáticamente):
+
+   * Ir a “Editar variables de entorno del sistema”
+   * Agregar a `Path` esta línea (ajustar si es otra versión):
+
+     ```
+     ```
+
+C:\Program Files\Java\jdk-17\bin
+
+````
+3. Verificar desde consola:
+   ```bash
+   java -version
+   javac -version
+````
+
+Si ambos responden con una versión, está todo listo.
 
 ---
 
-## 🏗️ Estructura del proyecto
+## Estructura del proyecto
 
 ```
 red-sismica/
+├── lib/                      # Librerías externas (ej. sqlite-jdbc)
+│   └── sqlite-jdbc-3.42.0.0.jar
 ├── src/
-│   ├── model/              # Clases del dominio (EventoSismico, Estado, Usuario, etc.)
-│   ├── controller/         # Gestores de caso de uso (GestorRevisionManual)
-│   ├── boundary/           # Pantalla simulada por consola (PantallaRevisionManual)
-│   ├── persistence/        # DAOs, acceso SQLite, utilitarios de conexión
-│   ├── utils/              # Enumeradores, validador, constantes
-│   └── Main.java           # Clase principal del sistema
+│   ├── model/               # Clases del dominio (EventoSismico, Estado, Usuario, etc.)
+│   ├── controller/          # Gestores de caso de uso (GestorRevisionManual)
+│   ├── boundary/            # Pantalla simulada por consola (PantallaRevisionManual)
+│   ├── persistence/         # DAOs, acceso SQLite, utilitarios de conexión
+│   ├── utils/               # Enumeradores, validador, constantes
+│   └── Main.java            # Clase principal del sistema
+├── out/                     # Carpeta generada con archivos compilados
 ├── database/
-│   └── red_sismica.db      # Base SQLite preconfigurada (archivo físico de la BD)
+│   └── red_sismica.db       # Base SQLite preconfigurada
+├── script.sql               # Script SQL para crear y poblar la base
 ├── README.md
-└── script.sql              # Script de creación de tablas y carga inicial
+└── .gitignore
 ```
 
 ---
 
-## 🚀 Instrucciones para ejecución y navegación del proyecto
+## Compilación y ejecución
 
-### 🔧 1. Clonar el repositorio
+### Compilar
 
-```bash
-git clone https://github.com/<usuario>/<repositorio>.git
-cd red-sismica
+Desde la carpeta raíz del proyecto:
+
+```powershell
+javac -cp "lib/sqlite-jdbc-3.42.0.0.jar" -d out `
+  "src/Main.java" `
+  "src/model/EventoSismico.java" `
+  "src/persistence/ConexionBD.java" `
+  "src/boundary/PantallaRevisionManual.java" `
+  "src/persistence/EventoSismicoDAO.java" `
+  "src/utils/Estado.java"
 ```
 
-### 🏗️ 2. Compilar y ejecutar el sistema
+> Asegurarse de que todos los nombres de carpeta estén bien escritos (`persistence` con "e").
 
-1. Abrí el proyecto en tu IDE (IntelliJ, Eclipse o VS Code).
-2. Asegurate de tener seleccionada la versión de Java 17 o superior.
-3. Ejecutá la clase `Main.java` desde tu IDE o terminal.
+### Ejecutar
 
-### 🗃️ 3. Configurar y verificar la base de datos
+```powershell
+java -cp "out;lib/sqlite-jdbc-3.42.0.0.jar" src.Main
+```
 
-* El proyecto utiliza SQLite y se conecta a través de JDBC.
-* Si no existe el archivo `red_sismica.db`, el sistema lo creará automáticamente desde `script.sql`.
-* Podés verificar y explorar la base con [DB Browser for SQLite](https://sqlitebrowser.org/).
+> PowerShell usa `;` para separar rutas. En Linux/Mac, cambiar por `:`.
 
-### 🔎 4. Navegación del sistema por consola
+### Notas
 
-* Al iniciar el programa, se listarán los eventos sísmicos pendientes de revisión.
-* El usuario podrá seleccionar un evento y registrar el resultado de la revisión (confirmar, rechazar o derivar).
-* Se actualiza el estado del evento y se registra el cambio en `CambioEstado`.
+* Durante la ejecución puede aparecer una advertencia de seguridad (`WARNING: A restricted method in java.lang.System...`). No afecta el funcionamiento.
+* No es necesario aceptar ni instalar nada adicional para correr el sistema.
+
+### ¿Qué se debe subir al repositorio?
+
+Al subir el proyecto, se deben incluir:
+
+* Todas las carpetas del código fuente (`src/`, `database/`, `lib/`)
+* El archivo `script.sql`
+* El archivo `README.md`
+
+No se deben subir:
+
+* Archivos compilados (`.class`) ni la carpeta `out/` (se puede incluir en `.gitignore`)
 
 ---
 
-## 📁 Estado actual del desarrollo
+## Inicialización de la base de datos
+
+* Si no existe `red_sismica.db`, podés generarla manualmente con DB Browser o programáticamente.
+
+### Usar DB Browser for SQLite:
+
+1. Abrir DB Browser y crear una nueva base de datos llamada `red_sismica.db` (guardarla en la carpeta `database/` del proyecto).
+2. Ir a la pestaña “Execute SQL” y pegar el contenido de `script.sql`
+3. Ejecutar el script y luego hacer clic en “Write Changes” para guardar los datos
+
+---
+
+## Navegación del sistema por consola
+
+* Al iniciar el sistema, se muestra un menú con opciones.
+* El analista puede listar eventos sísmicos pendientes.
+* Luego puede registrar el resultado de revisión para un evento.
+* El sistema actualiza el estado del evento en la base y guarda el historial de cambios.
+
+---
+
+## Estado del desarrollo
 
 * [x] Modelado UML de clases, secuencia y estados
 * [x] Estructura de carpetas base y archivos principales
 * [x] Conexión a base de datos SQLite funcional
+* [x] Compilación y ejecución funcional confirmada
 * [ ] Implementación completa del CU23 (en progreso)
 * [ ] Validaciones de negocio (en progreso)
 * [ ] Pruebas del flujo (pendiente)
 
 ---
 
-## 👥 Integrantes del grupo
+## Integrantes del grupo
 
 * \[Nombre Apellido – Legajo – Mail]
 * \[Nombre Apellido – Legajo – Mail]
@@ -101,7 +167,7 @@ cd red-sismica
 
 ---
 
-## 📜 Historial de entregas
+## Historial de entregas
 
 | Fecha          | Entrega                    | Descripción                        |
 | -------------- | -------------------------- | ---------------------------------- |
@@ -111,7 +177,7 @@ cd red-sismica
 
 ---
 
-## 📚 Referencias
+## Referencias
 
 * Especificación de Requerimientos de Software (ERS Red Sísmica)
 * Descripción del Dominio Red Sísmica

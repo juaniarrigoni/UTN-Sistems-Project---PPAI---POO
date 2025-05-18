@@ -7,28 +7,63 @@ import java.util.List;
 import java.util.Scanner;
 
 public class PantallaRevisionManual {
+    private final Scanner scanner;
+    private final EventoSismicoDAO dao;
 
-    private Scanner scanner = new Scanner(System.in);
-    private EventoSismicoDAO dao = new EventoSismicoDAO();
+    public PantallaRevisionManual() {
+        this.scanner = new Scanner(System.in);
+        try {
+            this.dao = new EventoSismicoDAO();
+        } catch (Exception e) {
+            throw new RuntimeException("Error al inicializar el DAO: " + e.getMessage());
+        }
+    }
 
     public void iniciar() {
-        System.out.println("Bienvenido al Sistema Red Sísmica - Revisión Manual");
+        boolean continuar = true;
+        while (continuar) {
+            mostrarMenu();
+            int opcion = leerOpcion();
+            try {
+                switch (opcion) {
+                    case 1 -> mostrarEventos();
+                    case 0 -> continuar = false;
+                    default -> System.out.println("Opción no válida");
+                }
+            } catch (Exception e) {
+                System.err.println("Error: " + e.getMessage());
+            }
+        }
+    }
+
+    private void mostrarMenu() {
+        System.out.println("\n=== Menú de Revisión Manual ===");
         System.out.println("1. Ver eventos sísmicos");
         System.out.println("0. Salir");
         System.out.print("Seleccione una opción: ");
+    }
 
-        int opcion = scanner.nextInt();
+    private int leerOpcion() {
+        while (!scanner.hasNextInt()) {
+            System.out.println("Por favor, ingrese un número válido");
+            scanner.next();
+        }
+        return scanner.nextInt();
+    }
 
-        switch (opcion) {
-            case 1:
-                List<EventoSismico> eventos = dao.listarTodos();
-                eventos.forEach(System.out::println);
-                break;
-            case 0:
-                System.out.println("Saliendo del sistema...");
-                break;
-            default:
-                System.out.println("Opción no válida.");
+    public void mostrarEventos() {
+        try {
+            List<EventoSismico> eventos = dao.listarTodos();
+            if (eventos.isEmpty()) {
+                System.out.println("No hay eventos sísmicos registrados.");
+            } else {
+                System.out.println("\n=== Eventos Sísmicos ===");
+                for (EventoSismico evento : eventos) {
+                    System.out.println("\n" + evento);
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error al mostrar eventos: " + e.getMessage());
         }
     }
 }
