@@ -1,0 +1,119 @@
+# 📘 Red Sísmica – PPAI 2025
+
+**Proyecto Práctico de Aplicación Integrador – UTN FRC / FRVM**
+**Materia:** Diseño de Sistemas de Información
+**Grupo:** \[Número de grupo]
+
+---
+
+## 🎯 Objetivo del proyecto
+
+Implementar en Java el caso de uso **CU 23: Registrar resultado de revisión manual** del sistema Red Sísmica. Esta funcionalidad permite al **Analista en Sismos** revisar eventos sísmicos auto detectados y registrar el resultado de dicha revisión: **confirmación**, **rechazo** o **derivación a experto**.
+
+El trabajo incluye:
+
+* Modelado UML (clases de análisis, diagrama de secuencia, máquina de estados)
+* Implementación orientada a objetos en Java
+* Persistencia en base de datos SQLite
+* Interfaz por consola
+
+---
+
+## 🛠️ Requisitos técnicos
+
+### ✅ Software a instalar:
+
+* [Java JDK 17 o superior](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html)
+* [Git](https://git-scm.com/downloads)
+* [SQLite Browser (opcional)](https://sqlitebrowser.org/)
+* Un IDE compatible con Java:
+
+  * [IntelliJ IDEA (recomendado)](https://www.jetbrains.com/idea/)
+  * [VS Code con extensión Java](https://code.visualstudio.com/)
+  * [Eclipse](https://www.eclipse.org/downloads/)
+
+---
+
+## 🏗️ Estructura del proyecto
+
+```
+red-sismica/
+├── src/
+│   ├── model/              # Clases del dominio (EventoSismico, Estado, Usuario, etc.)
+│   ├── controller/         # Gestores de caso de uso (GestorRevisionManual)
+│   ├── boundary/           # Pantalla simulada por consola (PantallaRevisionManual)
+│   ├── persistence/        # DAOs, acceso SQLite, utilitarios de conexión
+│   ├── utils/              # Enumeradores, validador, constantes
+│   └── Main.java           # Clase principal del sistema
+├── database/
+│   └── red_sismica.db      # Base SQLite preconfigurada (archivo físico de la BD)
+├── README.md
+└── script.sql              # Script de creación de tablas y carga inicial
+```
+
+---
+
+## 🚀 Instrucciones para ejecución y navegación del proyecto
+
+### 🔧 1. Clonar el repositorio
+
+```bash
+git clone https://github.com/<usuario>/<repositorio>.git
+cd red-sismica
+```
+
+### 🏗️ 2. Compilar y ejecutar el sistema
+
+1. Abrí el proyecto en tu IDE (IntelliJ, Eclipse o VS Code).
+2. Asegurate de tener seleccionada la versión de Java 17 o superior.
+3. Ejecutá la clase `Main.java` desde tu IDE o terminal.
+
+### 🗃️ 3. Configurar y verificar la base de datos
+
+* El proyecto utiliza SQLite y se conecta a través de JDBC.
+* Si no existe el archivo `red_sismica.db`, el sistema lo creará automáticamente desde `script.sql`.
+* Podés verificar y explorar la base con [DB Browser for SQLite](https://sqlitebrowser.org/).
+
+### 🔎 4. Navegación del sistema por consola
+
+* Al iniciar el programa, se listarán los eventos sísmicos pendientes de revisión.
+* El usuario podrá seleccionar un evento y registrar el resultado de la revisión (confirmar, rechazar o derivar).
+* Se actualiza el estado del evento y se registra el cambio en `CambioEstado`.
+
+---
+
+## 📁 Estado actual del desarrollo
+
+* [x] Modelado UML de clases, secuencia y estados
+* [x] Estructura de carpetas base y archivos principales
+* [x] Conexión a base de datos SQLite funcional
+* [ ] Implementación completa del CU23 (en progreso)
+* [ ] Validaciones de negocio (en progreso)
+* [ ] Pruebas del flujo (pendiente)
+
+---
+
+## 👥 Integrantes del grupo
+
+* \[Nombre Apellido – Legajo – Mail]
+* \[Nombre Apellido – Legajo – Mail]
+* \[Nombre Apellido – Legajo – Mail]
+
+---
+
+## 📜 Historial de entregas
+
+| Fecha          | Entrega                    | Descripción                        |
+| -------------- | -------------------------- | ---------------------------------- |
+| 2024-06-04     | Entrega 1 – Modelado UML   | Clases, secuencia, estados         |
+| 2024-06-07     | Entrega 2 – Código inicial | Setup + conexión a BD + estructura |
+| \[por definir] | Entrega final              | Flujo completo CU23 implementado   |
+
+---
+
+## 📚 Referencias
+
+* Especificación de Requerimientos de Software (ERS Red Sísmica)
+* Descripción del Dominio Red Sísmica
+* Modelo de Dominio oficial provisto por la cátedra
+* Material y criterios de entrega oficial PPAI 2025
