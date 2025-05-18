@@ -19,42 +19,16 @@ El trabajo incluye:
 
 ---
 
-## Requisitos técnicos
+## Análisis y Guía de Uso del Proyecto
 
-### Software necesario
+### ¿Qué hicimos?
 
-* [Java JDK 17 o superior](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html)
-
-  * Recomendado: instalador `.exe` (x64 Installer)
-* [Git](https://git-scm.com/downloads)
-* [DB Browser for SQLite (opcional)](https://sqlitebrowser.org/) para ver y editar la base manualmente
-* Un IDE compatible con Java (al menos uno):
-
-  * [IntelliJ IDEA](https://www.jetbrains.com/idea/)
-  * [VS Code](https://code.visualstudio.com/) con extensiones Java
-  * [Eclipse](https://www.eclipse.org/downloads/)
-
-### Configuración de Java en Windows
-
-1. Instalar Java desde el instalador `.exe`
-2. Agregar al PATH (si no lo hizo automáticamente):
-
-   * Ir a “Editar variables de entorno del sistema”
-   * Agregar a `Path` esta línea (ajustar si es otra versión):
-
-     ```
-     ```
-
-C:\Program Files\Java\jdk-17\bin
-
-````
-3. Verificar desde consola:
-   ```bash
-   java -version
-   javac -version
-````
-
-Si ambos responden con una versión, está todo listo.
+* Estructuramos el proyecto en carpetas separando modelo, persistencia, utilidades, interfaz y controlador.
+* Creamos la base de datos SQLite y las tablas necesarias (`usuarios`, `eventos_sismicos`, `cambios_estado`).
+* Agregamos datos de prueba para poder ver resultados inmediatos al ejecutar el sistema.
+* Implementamos la conexión a la base de datos desde Java usando JDBC.
+* Desarrollamos las clases principales: modelo (`EventoSismico`), acceso a datos (`EventoSismicoDAO`, `DatabaseConnection`), utilidades (`Estado`), interfaz de usuario (`PantallaRevisionManual`) y el punto de entrada (`Main`).
+* Probamos la aplicación y solucionamos errores comunes de compilación, conexión y estructura de la base de datos.
 
 ---
 
@@ -62,108 +36,128 @@ Si ambos responden con una versión, está todo listo.
 
 ```
 red-sismica/
-├── lib/                      # Librerías externas (ej. sqlite-jdbc)
-│   └── sqlite-jdbc-3.42.0.0.jar
 ├── src/
-│   ├── model/               # Clases del dominio (EventoSismico, Estado, Usuario, etc.)
-│   ├── controller/          # Gestores de caso de uso (GestorRevisionManual)
-│   ├── boundary/            # Pantalla simulada por consola (PantallaRevisionManual)
-│   ├── persistence/         # DAOs, acceso SQLite, utilitarios de conexión
-│   ├── utils/               # Enumeradores, validador, constantes
-│   └── Main.java            # Clase principal del sistema
-├── out/                     # Carpeta generada con archivos compilados
+│   ├── model/
+│   │   └── EventoSismico.java
+│   ├── persistence/
+│   │   ├── DatabaseConnection.java
+│   │   └── EventoSismicoDAO.java
+│   ├── utils/
+│   │   └── Estado.java
+│   ├── boundary/
+│   │   └── PantallaRevisionManual.java
+│   └── Main.java
 ├── database/
-│   └── red_sismica.db       # Base SQLite preconfigurada
-├── script.sql               # Script SQL para crear y poblar la base
-├── README.md
-└── .gitignore
+│   └── red_sismica.db
+├── lib/
+│   └── sqlite-jdbc-3.42.0.0.jar
+├── script.sql
+├── out/                # (se genera al compilar)
+└── README.md
+```
+
+**Notas:**
+
+* El archivo `red_sismica.db` debe estar en la carpeta `database/`.
+* El archivo `sqlite-jdbc-3.42.0.0.jar` debe estar en la carpeta `lib/`.
+* El archivo `script.sql` sirve para crear y poblar la base de datos.
+
+---
+
+## Comandos importantes
+
+### 1. Inicializar la base de datos
+
+```bash
+sqlite3 database/red_sismica.db < script.sql
+```
+
+### 2. Compilar el proyecto
+
+```bash
+javac -cp "lib/sqlite-jdbc-3.42.0.0.jar" -d out src/Main.java src/model/EventoSismico.java src/persistence/DatabaseConnection.java src/persistence/EventoSismicoDAO.java src/boundary/PantallaRevisionManual.java src/utils/Estado.java
+```
+
+### 3. Ejecutar el programa
+
+```bash
+java --enable-native-access=ALL-UNNAMED -cp "out;lib/sqlite-jdbc-3.42.0.0.jar" src.Main
 ```
 
 ---
 
-## Compilación y ejecución
+## ¿Qué hace cada cosa?
 
-### Compilar
-
-Desde la carpeta raíz del proyecto:
-
-```powershell
-javac -cp "lib/sqlite-jdbc-3.42.0.0.jar" -d out `
-  "src/Main.java" `
-  "src/model/EventoSismico.java" `
-  "src/persistence/ConexionBD.java" `
-  "src/boundary/PantallaRevisionManual.java" `
-  "src/persistence/EventoSismicoDAO.java" `
-  "src/utils/Estado.java"
-```
-
-> Asegurarse de que todos los nombres de carpeta estén bien escritos (`persistence` con "e").
-
-### Ejecutar
-
-```powershell
-java -cp "out;lib/sqlite-jdbc-3.42.0.0.jar" src.Main
-```
-
-> PowerShell usa `;` para separar rutas. En Linux/Mac, cambiar por `:`.
-
-### Notas
-
-* Durante la ejecución puede aparecer una advertencia de seguridad (`WARNING: A restricted method in java.lang.System...`). No afecta el funcionamiento.
-* No es necesario aceptar ni instalar nada adicional para correr el sistema.
-
-### ¿Qué se debe subir al repositorio?
-
-Al subir el proyecto, se deben incluir:
-
-* Todas las carpetas del código fuente (`src/`, `database/`, `lib/`)
-* El archivo `script.sql`
-* El archivo `README.md`
-
-No se deben subir:
-
-* Archivos compilados (`.class`) ni la carpeta `out/` (se puede incluir en `.gitignore`)
+* `script.sql`: Crea la base de datos y carga datos de ejemplo.
+* `src/model/EventoSismico.java`: Define la entidad principal del sistema.
+* `src/persistence/DatabaseConnection.java`: Maneja la conexión a la base de datos SQLite.
+* `src/persistence/EventoSismicoDAO.java`: Permite consultar y manipular eventos sísmicos en la base.
+* `src/utils/Estado.java`: Enumera los posibles estados de un evento sísmico.
+* `src/boundary/PantallaRevisionManual.java`: Interfaz de consola para interactuar con el sistema.
+* `src/Main.java`: Punto de entrada de la aplicación.
+* `lib/sqlite-jdbc-3.42.0.0.jar`: Driver JDBC necesario para conectar Java con SQLite.
+* `database/red_sismica.db`: Archivo físico de la base de datos.
 
 ---
 
-## Inicialización de la base de datos
+## Pasos para correr el proyecto
 
-* Si no existe `red_sismica.db`, podés generarla manualmente con DB Browser o programáticamente.
+1. Clona el repositorio y entra a la carpeta:
 
-### Usar DB Browser for SQLite:
+   ```sh
+   git clone <url-del-repo>
+   cd red-sismica
+   ```
 
-1. Abrir DB Browser y crear una nueva base de datos llamada `red_sismica.db` (guardarla en la carpeta `database/` del proyecto).
-2. Ir a la pestaña “Execute SQL” y pegar el contenido de `script.sql`
-3. Ejecutar el script y luego hacer clic en “Write Changes” para guardar los datos
+2. Crea la base de datos y carga los datos de prueba:
+
+   ```sh
+   sqlite3 database/red_sismica.db < script.sql
+   ```
+
+3. Compila el proyecto:
+
+   ```sh
+   javac -cp "lib/sqlite-jdbc-3.42.0.0.jar" -d out src/Main.java src/model/EventoSismico.java src/persistence/DatabaseConnection.java src/persistence/EventoSismicoDAO.java src/boundary/PantallaRevisionManual.java src/utils/Estado.java
+   ```
+
+4. Ejecuta la aplicación:
+
+   ```sh
+   java --enable-native-access=ALL-UNNAMED -cp "out;lib/sqlite-jdbc-3.42.0.0.jar" src.Main
+   ```
+
+5. ¡Listo! Usa el menú en consola para interactuar con el sistema.
 
 ---
 
-## Navegación del sistema por consola
+## .gitignore sugerido
 
-* Al iniciar el sistema, se muestra un menú con opciones.
-* El analista puede listar eventos sísmicos pendientes.
-* Luego puede registrar el resultado de revisión para un evento.
-* El sistema actualiza el estado del evento en la base y guarda el historial de cambios.
+Incluí las siguientes líneas para evitar subir archivos innecesarios:
+
+```
+/out/
+*.class
+*.db
+*.sqbpro
+.DS_Store
+```
+
+Esto evita subir:
+
+* Archivos compilados (`.class`)
+* Base de datos (`.db`) generada en local
+* Archivos del editor SQLite como `.sqbpro`
+* Archivos ocultos del sistema
 
 ---
 
 ## Estado del desarrollo
 
-* [x] Modelado UML de clases, secuencia y estados
-* [x] Estructura de carpetas base y archivos principales
-* [x] Conexión a base de datos SQLite funcional
-* [x] Compilación y ejecución funcional confirmada
-* [ ] Implementación completa del CU23 (en progreso)
-* [ ] Validaciones de negocio (en progreso)
-* [ ] Pruebas del flujo (pendiente)
-
----
-
-## Integrantes del grupo
-
-* \[Nombre Apellido – Legajo – Mail]
-* \[Nombre Apellido – Legajo – Mail]
-* \[Nombre Apellido – Legajo – Mail]
+* [x] Proyecto ejecuta y muestra eventos correctamente
+* [x] Estructura general organizada y modular
+* [x] Conexión con base SQLite validada
+* [ ] Flujo de CU completo con revisiones y cambios de estado (en progreso)
 
 ---
 
@@ -174,12 +168,3 @@ No se deben subir:
 | 2024-06-04     | Entrega 1 – Modelado UML   | Clases, secuencia, estados         |
 | 2024-06-07     | Entrega 2 – Código inicial | Setup + conexión a BD + estructura |
 | \[por definir] | Entrega final              | Flujo completo CU23 implementado   |
-
----
-
-## Referencias
-
-* Especificación de Requerimientos de Software (ERS Red Sísmica)
-* Descripción del Dominio Red Sísmica
-* Modelo de Dominio oficial provisto por la cátedra
-* Material y criterios de entrega oficial PPAI 2025

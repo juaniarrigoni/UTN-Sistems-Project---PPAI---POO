@@ -1,0 +1,5 @@
+/out/
+*.class
+*.db
+*.sqbpro
+.DS_Store
